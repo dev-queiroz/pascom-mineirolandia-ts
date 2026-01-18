@@ -25,3 +25,31 @@ export async function createEvent(req: AuthRequest, res: Response) {
         res.status(400).json({ error: 'Erro ao criar evento' });
     }
 }
+
+export async function assignToSlot(req: AuthRequest, res: Response) {
+    try {
+        const { eventId, slotOrder } = req.body;
+        if (!eventId || !slotOrder) return res.status(400).json({ error: 'Dados incompletos' });
+
+        if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
+
+        const result = await eventService.assignUserToSlot(eventId, slotOrder, req.user.id);
+        res.json(result);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+export async function removeFromSlot(req: AuthRequest, res: Response) {
+    try {
+        const { eventId, slotOrder } = req.body;
+        if (!eventId || !slotOrder) return res.status(400).json({ error: 'Dados incompletos' });
+
+        if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
+
+        const result = await eventService.removeUserFromSlot(eventId, slotOrder, req.user.id);
+        res.json(result);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+}

@@ -1,75 +1,69 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique
-  phone        String?
-  password     String // hash com argon2
-  escalacao    Int?     @default(2)
-  situacao     String?  @default("ativo")
-  setor        String?
-  funcao       String?  @default("user")
-  acompanhante String?  @default("nao")
-  createdAt    DateTime @default(now())
-
-  financials     Financial[]
+  id             Int             @id @default(autoincrement())
+  username       String          @unique
+  phone          String?
+  password       String
+  escalacao      Int?            @default(2)
+  situacao       String?         @default("ativo")
+  setor          String?
+  funcao         String?         @default("user")
+  acompanhante   String?         @default("nao")
+  createdAt      DateTime        @default(now())
   eventSlots     EventSlot[]
+  financials     Financial[]
   justifications Justification[]
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
-  month       String // "01" a "12"
-  day         String // "01" a "31"
-  time        String // "HH:mm"
+  id          Int         @id @default(autoincrement())
+  month       String
+  day         String
+  time        String
   description String?
   location    String?
-  createdAt   DateTime @default(now())
-
-  slots EventSlot[]
+  createdAt   DateTime    @default(now())
+  slots       EventSlot[]
 }
 
 model EventSlot {
   id       Int     @id @default(autoincrement())
   eventId  Int
-  function String? // PC, RITOS, ACOMPANHANTE, etc
+  function String?
   userId   Int?
-  order    Int // 1 a 10
-
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user  User? @relation(fields: [userId], references: [id])
+  order    Int
+  event    Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user     User?   @relation(fields: [userId], references: [id])
 }
 
 model Financial {
   id        Int       @id @default(autoincrement())
-  type      String // entrada / saida
+  type      String
   value     Decimal
   date      DateTime
   time      DateTime?
   note      String?
-  receipt   String? // caminho do arquivo
+  receipt   String?
   userId    Int
   status    String    @default("pendente")
   createdAt DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model Justification {
   id            Int      @id @default(autoincrement())
   userId        Int
   eventId       Int
-  slotOrder     Int // qual posição (1-10)
+  slotOrder     Int
   justification String
   timestamp     DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
 }

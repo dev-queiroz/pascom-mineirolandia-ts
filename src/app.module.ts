@@ -9,6 +9,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { PdfService } from './pdf/pdf.service';
 import { PdfController } from './pdf/pdf.controller';
 import { PdfModule } from './pdf/pdf.module';
+import { ExtrasModule } from './extras/extras.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PdfModule } from './pdf/pdf.module';
     FinancialModule,
     DashboardModule,
     PdfModule,
+    ExtrasModule,
   ],
   providers: [PrismaService, PdfService],
   controllers: [PdfController],

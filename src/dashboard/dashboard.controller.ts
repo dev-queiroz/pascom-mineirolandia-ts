@@ -11,7 +11,7 @@ export class DashboardController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  getDashboard(@Query('month') month?: string) {
+  async getDashboard(@Query('month') month?: string) {
     return this.dashboardService.getAdminDashboard(month);
   }
 }

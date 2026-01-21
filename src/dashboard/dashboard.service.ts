@@ -5,17 +5,21 @@ import { PrismaService } from '../prisma/prisma.service';
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getAdminDashboard(
-    month: string = new Date().toISOString().slice(0, 7),
-  ) {
-    const [pendenciasCount, escalasCount, usersCount, justificativas, saldo] =
+  async getAdminDashboard(month?: string) {
+    const currentMonth =
+      month || new Date().toISOString().slice(0, 7).slice(5, 7); // MM
+
+    const [pendencias, escalasCount, usersCount, justificativas] =
       await Promise.all([
-        this.prisma.financial.count({ where: { status: 'pendente' } }),
+        this.prisma.financial.findMany({
+          where: { status: 'pendente' },
+          select: { value: true },
+        }),
 
         this.prisma.eventSlot.count({
           where: {
-            event: { month: month.slice(5, 7) },
             userId: { not: null },
+            event: { month: currentMonth },
           },
         }),
 
@@ -30,30 +34,53 @@ export class DashboardService {
           include: { user: { select: { username: true } } },
         }),
 
-        this.prisma.financial.groupBy({
-          by: ['type'],
-          where: { status: 'confirmado' },
+        this.prisma.financial.aggregate({
           _sum: { value: true },
+          where: { status: 'confirmado' },
+          _count: true,
         }),
       ]);
 
-    const saldoTotal =
-      Number(saldo.find((s) => s.type === 'entrada')?._sum.value ?? 0) -
-      Number(saldo.find((s) => s.type === 'saida')?._sum.value ?? 0);
-
-    const usersActive =
-      usersCount.find((u) => u.situacao === 'ativo')?._count.id ?? 0;
-    const usersInactive = usersCount.reduce(
-      (acc, u) => acc + (u.situacao !== 'ativo' ? u._count.id : 0),
+    const pendenciasCount = pendencias.length;
+    const pendenciasTotal = pendencias.reduce(
+      (acc, p) => acc + Number(p.value),
       0,
     );
 
+    const entradas = await this.prisma.financial.aggregate({
+      _sum: { value: true },
+      where: { status: 'confirmado', type: 'entrada' },
+    });
+
+    const saidas = await this.prisma.financial.aggregate({
+      _sum: { value: true },
+      where: { status: 'confirmado', type: 'saida' },
+    });
+
+    const saldoTotal =
+      Number(entradas._sum.value ?? 0) - Number(saidas._sum.value ?? 0);
+
+    const usersActive =
+      usersCount.find((u) => u.situacao === 'ativo')?._count.id ?? 0;
+    const usersInactive =
+      usersCount.find((u) => u.situacao !== 'ativo')?._count.id ?? 0;
+
     return {
-      pendencias: pendenciasCount,
+      pendencias: {
+        count: pendenciasCount,
+        total: pendenciasTotal,
+      },
       escalasMes: escalasCount,
-      usuarios: { ativos: usersActive, inativos: usersInactive },
+      usuarios: {
+        ativos: usersActive,
+        inativos: usersInactive,
+      },
       ultimasJustificativas: justificativas,
-      saldo: { total: saldoTotal },
+      saldo: {
+        total: saldoTotal,
+        entradas: entradas._sum.value ?? 0,
+        saidas: saidas._sum.value ?? 0,
+      },
     };
   }
 }

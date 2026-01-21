@@ -21,7 +21,7 @@ export class FinancialService {
         date: new Date(dto.date),
         time: dto.time ? new Date(dto.time) : null,
         note: dto.note,
-        receipt: receiptPath,
+        receipt: receiptPath ? `/uploads/${receiptPath}` : null,
         userId,
         status: 'pendente',
       },

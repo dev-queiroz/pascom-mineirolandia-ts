@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
 import { FinancialModule } from './financial/financial.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { PrismaService } from './prisma/prisma.service';
 
 @Module({
@@ -13,6 +14,7 @@ import { PrismaService } from './prisma/prisma.service';
     UserModule,
     EventModule,
     FinancialModule,
+    DashboardModule,
   ],
   providers: [PrismaService],
 })

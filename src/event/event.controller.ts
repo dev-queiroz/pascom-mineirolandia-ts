@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  Req,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -51,5 +52,30 @@ export class EventController {
   @Roles('admin')
   remove(@Param('id') id: string) {
     return this.eventService.remove(+id);
+  }
+
+  @Post(':id/assign')
+  @UseGuards(JwtAuthGuard)
+  async assignSlot(
+    @Param('id') eventId: string,
+    @Body('slotOrder') slotOrder: number,
+    @Req() req: Request & { user: { userId: number } },
+  ) {
+    return this.eventService.assignSlot(+eventId, slotOrder, req.user.userId);
+  }
+
+  @Post(':id/remove')
+  @UseGuards(JwtAuthGuard)
+  async removeSlot(
+    @Param('id') eventId: string,
+    @Body() body: { slotOrder: number; justification: string },
+    @Req() req: Request & { user: { userId: number } },
+  ) {
+    return this.eventService.removeSlot(
+      +eventId,
+      body.slotOrder,
+      req.user.userId,
+      body.justification,
+    );
   }
 }

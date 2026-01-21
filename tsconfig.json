@@ -19,6 +19,9 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
-  }
+    "moduleResolution": "node",
+    "typeRoots": ["./types", "./node_modules/@types"]
+  },
+  "include": ["src", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

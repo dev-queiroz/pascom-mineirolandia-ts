@@ -5,23 +5,27 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(private prisma: PrismaService) {
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ignoreExpiration: false,
-            secretOrKey: process.env.JWT_SECRET as string,
-        });
+  constructor(private prisma: PrismaService) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: process.env.JWT_SECRET as string,
+    });
+  }
+
+  async validate(payload: { sub: number; username: string; funcao: string }) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
     }
 
-    async validate(payload: { sub: number; username: string; funcao: string }) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: payload.sub },
-        });
-
-        if (!user) {
-            throw new UnauthorizedException('Usuário não encontrado');
-        }
-
-        return { userId: payload.sub, username: payload.username, funcao: payload.funcao };
-    }
+    return {
+      userId: payload.sub,
+      username: payload.username,
+      funcao: payload.funcao,
+    };
+  }
 }

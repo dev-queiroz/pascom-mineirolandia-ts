@@ -11,6 +11,7 @@ import {
   Query,
   UploadedFile,
   UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
 import { FinancialService } from './financial.service';
 import { CreateContributionDto } from './dto/create-contribution.dto';
@@ -39,7 +40,7 @@ export class FinancialController {
       }),
       fileFilter: (req, file, cb) => {
         if (!file.originalname.match(/\.(jpg|jpeg|png|pdf)$/)) {
-          return cb(new Error('Apenas jpg, png e pdf'), false);
+          cb(new BadRequestException('Apenas jpg, png e pdf'), false);
         }
         cb(null, true);
       },
@@ -51,10 +52,11 @@ export class FinancialController {
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request & { user: { userId: number } },
   ) {
+    const receiptPath = file ? file.filename : undefined;
     return this.financialService.createContribution(
       dto,
       req.user.userId,
-      file?.filename,
+      receiptPath,
     );
   }
 

@@ -9,3 +9,5 @@ coverage/
 *.tmp
 src/generated/
 /generated/prisma
+.vercel
+.env*.local

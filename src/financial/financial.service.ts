@@ -48,32 +48,35 @@ export class FinancialService {
   }
 
   async getSummary(month?: string) {
-    let where = {};
+    const where: any = { status: 'confirmado' };
+
     if (month) {
+      if (!/^\d{4}-\d{2}$/.test(month)) {
+        throw new BadRequestException('Formato de mês inválido. Use YYYY-MM');
+      }
+
       const start = new Date(`${month}-01T00:00:00.000Z`);
       const end = new Date(start);
       end.setMonth(end.getMonth() + 1);
 
-      where = {
-        date: {
-          gte: start,
-          lt: end,
-        },
+      where.date = {
+        gte: start,
+        lt: end,
       };
     }
 
-    const entries = await this.prisma.financial.aggregate({
+    const stats = await this.prisma.financial.groupBy({
+      by: ['type'],
       _sum: { value: true },
-      where: { ...where, type: 'entrada', status: 'confirmado' },
+      where: where,
     });
 
-    const exits = await this.prisma.financial.aggregate({
-      _sum: { value: true },
-      where: { ...where, type: 'saida', status: 'confirmado' },
-    });
-
-    const entradas = Number(entries._sum?.value ?? 0);
-    const saidas = Number(exits._sum?.value ?? 0);
+    const entradas = Number(
+      stats.find((s) => s.type === 'entrada')?._sum.value ?? 0,
+    );
+    const saidas = Number(
+      stats.find((s) => s.type === 'saida')?._sum.value ?? 0,
+    );
 
     return {
       entradas,

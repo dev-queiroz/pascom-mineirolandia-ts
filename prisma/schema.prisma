@@ -47,9 +47,9 @@ model EventSlot {
 model Financial {
   id        Int      @id @default(autoincrement())
   type      String
-  value     Decimal
+  value     Decimal  @db.Decimal(10, 2)
   date      DateTime
-  time      String? // <-- Mude de DateTime? para String?
+  time      String?
   note      String?
   receipt   String?
   userId    Int

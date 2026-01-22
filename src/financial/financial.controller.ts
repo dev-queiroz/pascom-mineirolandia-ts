@@ -21,17 +21,21 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'node:path';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('financial')
+@ApiBearerAuth('JWT')
 @Controller('financial')
 export class FinancialController {
   constructor(private financialService: FinancialService) {}
 
   @Post('contribution')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Adicionar contribuição pendente (usuário)' })
   @UseInterceptors(
     FileInterceptor('comprovante', {
       storage: diskStorage({
-        destination: './tmp',
+        destination: './uploads',
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -63,6 +67,7 @@ export class FinancialController {
   @Get('pendings')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Listar pendências (admin)' })
   getPendings() {
     return this.financialService.getPendings();
   }
@@ -70,6 +75,7 @@ export class FinancialController {
   @Patch('pendings/:id/confirm')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Confirmar pendência (admin)' })
   confirmPendency(@Param('id') id: string) {
     return this.financialService.confirmPendency(+id);
   }
@@ -77,6 +83,7 @@ export class FinancialController {
   @Delete('pendings/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Deletar pendência (admin)' })
   deletePendency(@Param('id') id: string) {
     return this.financialService.deletePendency(+id);
   }
@@ -84,6 +91,7 @@ export class FinancialController {
   @Get('summary')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Obter resumo financeiro (admin)' })
   getSummary(@Query('month') month?: string) {
     return this.financialService.getSummary(month);
   }

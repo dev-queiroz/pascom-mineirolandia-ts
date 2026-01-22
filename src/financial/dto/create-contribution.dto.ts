@@ -3,21 +3,28 @@ import {
   IsPositive,
   IsString,
   IsOptional,
-  IsDateString,
+  IsISO8601,
 } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateContributionDto {
+  @ApiProperty({ example: 150 })
+  @Type(() => Number)
   @IsNumber()
   @IsPositive()
   value: number;
 
-  @IsDateString()
+  @ApiProperty({ example: '2026-01-22' })
+  @IsISO8601()
   date: string;
 
-  @IsDateString()
+  @ApiPropertyOptional({ example: '14:30' })
+  @IsString()
   @IsOptional()
-  time?: string;
+  time?: string; // aceita HH:MM ou HH:MM:SS
 
+  @ApiPropertyOptional({ example: 'Doação mensal' })
   @IsString()
   @IsOptional()
   note?: string;

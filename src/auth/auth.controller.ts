@@ -3,17 +3,33 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth/jwt-auth.guard';
 import { Request } from 'express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
+@ApiBearerAuth('JWT')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @ApiOperation({ summary: 'Autenticação de usuário' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: 201, description: 'Token JWT gerado' })
+  @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
   @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Obter perfil do usuário logado' })
+  @ApiResponse({ status: 200, description: 'Dados do perfil' })
   @UseGuards(JwtAuthGuard)
   async getMe(@Req() req: Request & { user: { userId: number } }) {
     return this.authService.getMe(req.user.userId);

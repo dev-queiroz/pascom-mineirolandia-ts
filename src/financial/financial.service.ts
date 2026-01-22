@@ -11,7 +11,7 @@ export class FinancialService {
     userId: number,
     receiptPath?: string,
   ) {
-    if (dto.value <= 0)
+    if (isNaN(dto.value) || dto.value <= 0)
       throw new BadRequestException('Valor deve ser positivo');
 
     return this.prisma.financial.create({
@@ -19,7 +19,7 @@ export class FinancialService {
         type: 'entrada',
         value: dto.value,
         date: new Date(dto.date),
-        time: dto.time ? new Date(dto.time) : null,
+        time: dto.time || null,
         note: dto.note,
         receipt: receiptPath ? `/uploads/${receiptPath}` : null,
         userId,

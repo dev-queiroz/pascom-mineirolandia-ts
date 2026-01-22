@@ -16,7 +16,10 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('events')
+@ApiBearerAuth('JWT')
 @Controller('events')
 export class EventController {
   constructor(private eventService: EventService) {}
@@ -24,18 +27,21 @@ export class EventController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Criar novo evento (admin)' })
   create(@Body() dto: CreateEventDto) {
     return this.eventService.create(dto);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Listar eventos (opcional filtro por mês)' })
   findAll(@Query('month') month?: string) {
     return this.eventService.findAll(month);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Obter detalhes de um evento pelo ID' })
   findOne(@Param('id') id: string) {
     return this.eventService.findOne(+id);
   }
@@ -43,6 +49,7 @@ export class EventController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Atualizar evento (admin)' })
   update(@Param('id') id: string, @Body() dto: UpdateEventDto) {
     return this.eventService.update(+id, dto);
   }
@@ -50,12 +57,14 @@ export class EventController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Remover evento (admin)' })
   remove(@Param('id') id: string) {
     return this.eventService.remove(+id);
   }
 
   @Post(':id/assign')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Atribuir slot de evento ao usuário autenticado' })
   async assignSlot(
     @Param('id') eventId: string,
     @Body('slotOrder') slotOrder: number,
@@ -66,6 +75,7 @@ export class EventController {
 
   @Post(':id/remove')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Remover slot de evento do usuário autenticado' })
   async removeSlot(
     @Param('id') eventId: string,
     @Body() body: { slotOrder: number; justification: string },

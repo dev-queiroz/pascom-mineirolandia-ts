@@ -45,17 +45,17 @@ model EventSlot {
 }
 
 model Financial {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   type      String
   value     Decimal
   date      DateTime
-  time      DateTime?
+  time      String? // <-- Mude de DateTime? para String?
   note      String?
   receipt   String?
   userId    Int
-  status    String    @default("pendente")
-  createdAt DateTime  @default(now())
-  user      User      @relation(fields: [userId], references: [id])
+  status    String   @default("pendente")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Justification {

@@ -4,7 +4,10 @@ import { PdfService } from './pdf.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('pdf')
+@ApiBearerAuth('JWT')
 @Controller('pdf')
 export class PdfController {
   constructor(private pdfService: PdfService) {}
@@ -12,6 +15,7 @@ export class PdfController {
   @Get('scale')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiOperation({ summary: 'Gerar PDF da escala mensal' })
   async generateScale(@Query('month') month: string, @Res() res: Response) {
     const filePath = await this.pdfService.generateMonthlyScalePDF(month);
     res.download(filePath, `escala-${month}.pdf`);

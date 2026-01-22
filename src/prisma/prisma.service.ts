@@ -9,7 +9,6 @@ export class PrismaService
   constructor() {
     super({
       log: ['query', 'info', 'warn', 'error'],
-      accelerateUrl: process.env.ACCELERATE_URL,
     });
   }
 

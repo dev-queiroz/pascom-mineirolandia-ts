@@ -6,7 +6,6 @@ coverage/
 .vscode/
 .idea/
 *.log
-*.tmp
 src/generated/
 /generated/prisma
 .vercel

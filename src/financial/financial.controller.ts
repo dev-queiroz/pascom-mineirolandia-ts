@@ -31,7 +31,7 @@ export class FinancialController {
   @UseInterceptors(
     FileInterceptor('comprovante', {
       storage: diskStorage({
-        destination: './uploads',
+        destination: './tmp',
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);

@@ -1,25 +1,24 @@
 # PASCOM Backend (NestJS)
 
-API completa para sistema PASCOM (autenticação, usuários, eventos, financeiro, dashboard, PDF, ICS, WhatsApp).
+API completa do sistema PASCOM.
 
 ## Tecnologias
 - NestJS 11
-- Prisma 5.18.0
-- Argon2 (hash)
-- JWT + Passport
+- Prisma 5.18.0 + Neon PostgreSQL
+- Argon2, JWT, Passport
 - Multer (upload)
-- PDFkit (PDF)
-- ICS (ical)
-- Docker + Render (deploy)
+- PDFkit, ICS
+- Swagger docs
+- Render (deploy)
+- Docker (opcional)
 
 ## Setup local
-1. Clone repo
-2. cd backend-nest
-3. `npm install`
-4. Copie .env.example → .env e preencha (DATABASE_URL, JWT_SECRET)
-5. `npx prisma generate`
-6. `npx prisma migrate dev`
-7. `npm run start:dev`
+1. cd backend-nest
+2. `npm install`
+3. Copie .env.example → .env (preencha DATABASE_URL + JWT_SECRET)
+4. `npx prisma generate`
+5. `npx prisma migrate dev`
+6. `npm run start:dev`
 
 - API: http://localhost:3000
 - Swagger: http://localhost:3000/api
@@ -28,31 +27,19 @@ API completa para sistema PASCOM (autenticação, usuários, eventos, financeiro
 docker compose up --build
 
 ## Deploy Render
-1. Crie conta render.com
-2. New → Web Service → GitHub repo
-3. Build Command: `npm install && npx prisma generate && npm run build`
-4. Start Command: `npm run start:prod`
-5. Env vars: DATABASE_URL, JWT_SECRET
+- Service ID: srv-d5p42ad6ubrc739pa2u0
+- Hook: https://api.render.com/deploy/srv-d5p42ad6ubrc739pa2u0?key=1U63X5OTxM4
+- CI/CD: GitHub Actions (push main → deploy automático)
+- Keep-alive: cron-job.org ping a cada 10 min
 
 ## Endpoints principais (Swagger)
-- POST /auth/login – Login
-- GET /auth/me – Perfil próprio (protegido)
-- POST /users – Criar usuário (admin)
-- GET /users/me – Perfil próprio
-- POST /events – Criar evento (admin)
-- GET /events?month=01 – Lista eventos
-- POST /events/:id/assign – Servir vaga
-- POST /events/:id/remove – Desistir + justificativa
-- POST /financial/contribution – Adicionar contribuição (com upload)
-- GET /financial/pendings – Pendências (admin)
-- GET /dashboard – Dashboard admin
-- GET /pdf/scale?month=01 – PDF escala (admin)
-- GET /extras/ics/:eventId – ICS evento
-- GET /extras/whatsapp?month=01 – Links WhatsApp (admin)
-
-## Regras de negócio
-- Limite mensal de escalas (user.escalacao ou 2 default)
-- Não escalar mesmo dia
-- Acompanhante só para habilitados
-- Justificativa obrigatória ao desistir
-- Contribuição pendente até admin confirmar
+- POST /auth/login → login
+- GET /auth/me → perfil
+- POST /users → criar usuário (admin)
+- POST /events → criar evento (admin)
+- POST /financial/contribution → contribuição + upload
+- GET /financial/pendings → pendências (admin)
+- GET /dashboard → dashboard admin
+- GET /pdf/scale?month=01 → PDF escala (admin)
+- GET /extras/ics/:eventId → ICS
+- GET /extras/whatsapp?month=01 → links WhatsApp (admin)

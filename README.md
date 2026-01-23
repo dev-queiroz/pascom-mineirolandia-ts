@@ -1,6 +1,7 @@
 # PASCOM Backend (NestJS)
 
 API completa do sistema PASCOM.
+Link do backend no Render: https://pascom-backend.onrender.com/
 
 ## Tecnologias
 - NestJS 11
@@ -30,7 +31,7 @@ docker compose up --build
 - Service ID: srv-d5p42ad6ubrc739pa2u0
 - Hook: https://api.render.com/deploy/srv-d5p42ad6ubrc739pa2u0?key=1U63X5OTxM4
 - CI/CD: GitHub Actions (push main → deploy automático)
-- Keep-alive: cron-job.org ping a cada 10 min
+- Keep-alive: GitHub Actions ping a cada 2 min
 
 ## Endpoints principais (Swagger)
 - POST /auth/login → login
@@ -43,3 +44,9 @@ docker compose up --build
 - GET /pdf/scale?month=01 → PDF escala (admin)
 - GET /extras/ics/:eventId → ICS
 - GET /extras/whatsapp?month=01 → links WhatsApp (admin)
+
+## Autor
+- [Douglas Vinícios dos Santos Queiroz](https://www.linkedin.com/in/douglas-queiroz-saas/)
+- GitHub: [dev-queiroz](https://github.com/dev-queiroz)
+- E-mail: [queirozdouglas466@gmail.com](mailto:queirozdouglas466@gmail.com)
+- WhatsApp: +55 (88) 9 9629-3741

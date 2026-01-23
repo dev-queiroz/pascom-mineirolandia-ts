@@ -10,6 +10,7 @@ import { PdfService } from './pdf/pdf.service';
 import { PdfController } from './pdf/pdf.controller';
 import { PdfModule } from './pdf/pdf.module';
 import { ExtrasModule } from './extras/extras.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ExtrasModule } from './extras/extras.module';
     DashboardModule,
     PdfModule,
     ExtrasModule,
+    HealthModule,
   ],
   providers: [PrismaService, PdfService],
   controllers: [PdfController],

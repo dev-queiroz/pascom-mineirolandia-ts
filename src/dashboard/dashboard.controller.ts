@@ -13,7 +13,6 @@ export class DashboardController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
   @ApiOperation({ summary: 'Dashboard admin completo' })
   async getDashboard(@Query('month') month?: string) {
     return this.dashboardService.getAdminDashboard(month);

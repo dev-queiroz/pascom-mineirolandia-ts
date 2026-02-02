@@ -12,6 +12,11 @@ import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 class SlotDto {
+  @ApiPropertyOptional({ example: 123 })
+  @IsInt()
+  @IsOptional()
+  id?: number;
+
   @ApiPropertyOptional({ example: 'PC' })
   @IsString()
   @IsOptional()

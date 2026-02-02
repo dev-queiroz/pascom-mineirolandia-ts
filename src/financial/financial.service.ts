@@ -1,36 +1,56 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContributionDto } from './dto/create-contribution.dto';
+import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
 
 @Injectable()
 export class FinancialService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
   async createContribution(
     dto: CreateContributionDto,
     userId: number,
-    receiptPath?: string,
+    file?: Express.Multer.File,
   ) {
     if (isNaN(dto.value) || dto.value <= 0)
       throw new BadRequestException('Valor deve ser positivo');
 
+    let receiptUrl: string | null = null;
+
+    if (file) {
+      const upload = await this.cloudinary.uploadImage(file);
+      receiptUrl = upload.secure_url;
+    }
+
     return this.prisma.financial.create({
       data: {
         type: 'entrada',
-        value: dto.value,
+        value: Number(dto.value),
         date: new Date(dto.date),
-        time: dto.time || null,
         note: dto.note,
-        receipt: receiptPath ? `/uploads/${receiptPath}` : null,
+        receipt: receiptUrl,
         userId,
         status: 'pendente',
       },
     });
   }
 
-  async getPendings() {
+  async getPendings(user: {
+    userId: number;
+    username: string;
+    funcao: string;
+  }) {
+    const where: any = { status: 'pendente' };
+
+    if (user.funcao !== 'admin') {
+      where.userId = user.userId;
+    }
+
     return this.prisma.financial.findMany({
-      where: { status: 'pendente' },
+      where,
       include: { user: { select: { username: true } } },
       orderBy: { createdAt: 'desc' },
     });

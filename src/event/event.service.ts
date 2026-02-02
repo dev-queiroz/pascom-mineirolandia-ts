@@ -61,8 +61,26 @@ export class EventService {
   }
 
   async update(id: number, dto: UpdateEventDto) {
-    const event = await this.prisma.event.findUnique({ where: { id } });
+    const event = await this.prisma.event.findUnique({
+      where: { id },
+      include: { slots: true },
+    });
+
     if (!event) throw new NotFoundException('Evento não encontrado');
+
+    if (!dto.slots) {
+      return this.prisma.event.update({
+        where: { id },
+        data: {
+          month: dto.month,
+          day: dto.day,
+          time: dto.time,
+          description: dto.description,
+          location: dto.location,
+        },
+        include: { slots: true },
+      });
+    }
 
     return this.prisma.event.update({
       where: { id },
@@ -72,8 +90,32 @@ export class EventService {
         time: dto.time,
         description: dto.description,
         location: dto.location,
+        slots: {
+          deleteMany: {
+            id: {
+              notIn: dto.slots
+                .map((s) => s.id)
+                .filter((id): id is number => !!id),
+            },
+          },
+          upsert: dto.slots.map((s) => ({
+            where: { id: s.id && s.id > 0 ? s.id : 0 },
+            update: {
+              function: s.function,
+              order: s.order,
+            },
+            create: {
+              function: s.function,
+              order: s.order,
+            },
+          })),
+        },
       },
-      include: { slots: true },
+      include: {
+        slots: {
+          include: { user: { select: { username: true } } },
+        },
+      },
     });
   }
 

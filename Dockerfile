@@ -1,5 +1,6 @@
-# Stage 1: Build
 FROM node:20-alpine AS builder
+
+RUN apk add --no-color openssl libc6-compat
 
 WORKDIR /app
 
@@ -10,19 +11,22 @@ COPY . .
 RUN npx prisma generate
 RUN npm run build
 
-# Stage 2: Production
+# Estágio 2: Production
 FROM node:20-alpine
+
+RUN apk add --no-color openssl libc6-compat
 
 WORKDIR /app
 
 COPY --from=builder /app/package*.json ./
-RUN npm install --production
+RUN npm install --omit=dev
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src/assets ./src/assets
 
-COPY .env ./
+RUN mkdir -p uploads
 
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+CMD npx prisma migrate deploy && node dist/main

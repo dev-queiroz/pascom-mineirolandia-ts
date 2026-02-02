@@ -5,7 +5,6 @@ import {
   Get,
   UseGuards,
   Req,
-  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -30,17 +29,8 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 201, description: 'Token JWT gerado' })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
-  async login(
-    @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const token = await this.authService.login(loginDto);
-    res.cookie('access_token', token.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    });
-    return token;
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
   }
 
   @Get('me')

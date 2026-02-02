@@ -32,16 +32,32 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
   async login(
     @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) res: Response, // ← importante
+    @Res({ passthrough: true }) res: Response,
   ) {
     const { access_token } = await this.authService.login(loginDto);
 
+    // Força os headers CORS manualmente (sobrescreve qualquer problema no enableCors)
+    res.setHeader(
+      'Access-Control-Allow-Origin',
+      'https://pascompnsps.vercel.app',
+    );
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    );
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, Accept',
+    );
+
+    // Set o cookie (já estava bom)
     res.cookie('access_token', access_token, {
       httpOnly: true,
-      secure: true, // obrigatório para SameSite=None em HTTPS
-      sameSite: 'none', // permite cross-site
+      secure: true,
+      sameSite: 'none',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias (ajuste conforme seu JWT)
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return { success: true, message: 'Login realizado com sucesso' };

@@ -10,3 +10,4 @@ src/generated/
 /generated/prisma
 .vercel
 .env*.local
+/uploads/

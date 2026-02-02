@@ -9,8 +9,9 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: 'http://localhost:3001', // URL do seu frontend
-    credentials: true, // Permite envio de cookies
+    origin: ['https://pascompnsps.vercel.app/', 'http://localhost:3001'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
   });
 
   // Validação global

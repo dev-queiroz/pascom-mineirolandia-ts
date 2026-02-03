@@ -30,37 +30,13 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 201, description: 'Token JWT gerado' })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
-  async login(
-    @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async login(@Body() loginDto: LoginDto) {
     const { access_token } = await this.authService.login(loginDto);
-
-    // Força os headers CORS manualmente (sobrescreve qualquer problema no enableCors)
-    res.setHeader(
-      'Access-Control-Allow-Origin',
-      'https://pascompnsps.vercel.app',
-    );
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    );
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Authorization, Accept',
-    );
-
-    // Set o cookie (já estava bom)
-    res.cookie('access_token', access_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return { success: true, message: 'Login realizado com sucesso' };
+    return {
+      access_token,
+      success: true,
+      message: 'Login realizado com sucesso',
+    };
   }
 
   @Get('me')

@@ -17,7 +17,12 @@ export class PdfController {
   @Roles('admin')
   @ApiOperation({ summary: 'Gerar PDF da escala mensal' })
   async generateScale(@Query('month') month: string, @Res() res: Response) {
-    const filePath = await this.pdfService.generateMonthlyScalePDF(month);
-    res.download(filePath, `escala-${month}.pdf`);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=escala-${month}.pdf`,
+    );
+
+    await this.pdfService.generateMonthlyScalePDF(month, res);
   }
 }

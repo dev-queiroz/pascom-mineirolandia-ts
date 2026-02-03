@@ -17,9 +17,13 @@ export class ExtrasController {
   @ApiOperation({ summary: 'Gerar arquivo ICS para evento' })
   async generateICS(@Param('eventId') eventId: string, @Res() res: Response) {
     const icsContent = await this.extrasService.generateICS(+eventId);
-    res.set('Content-Type', 'text/calendar');
-    res.set('Content-Disposition', 'attachment; filename="escala.ics"');
-    res.send(icsContent);
+
+    res.set({
+      'Content-Type': 'text/calendar; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="evento.ics"',
+    });
+
+    return res.send(icsContent);
   }
 
   @Get('whatsapp')

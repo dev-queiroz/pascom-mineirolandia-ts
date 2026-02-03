@@ -14,20 +14,18 @@ export class ExtrasService {
 
     if (!event) throw new BadRequestException('Evento não encontrado');
 
-    const date = new Date(`2026-${event.month}-${event.day}`);
+    // Evitamos o "new Date(string)" que pode falhar dependendo do fuso do servidor
+    const year = 2026;
+    const month = parseInt(event.month, 10);
+    const day = parseInt(event.day, 10);
     const [hour, minute] = event.time.split(':').map(Number);
 
     const { error, value } = ics.createEvent({
-      start: [
-        date.getFullYear(),
-        date.getMonth() + 1,
-        date.getDate(),
-        hour,
-        minute,
-      ],
+      // O array espera: [ano, mes, dia, hora, minuto]
+      start: [year, month, day, hour, minute],
       duration: { hours: 2 },
       title: `Escala PASCOM - ${event.description || 'Evento'}`,
-      description: `Local: ${event.location || 'Não especificado'}\nSlots: ${event.slots.length}`,
+      description: `Local: ${event.location || 'Não especificado'}\nFunções: ${event.slots.length}`,
       location: event.location || 'Não especificado',
       status: 'CONFIRMED',
       alarms: [
@@ -39,7 +37,10 @@ export class ExtrasService {
       ],
     });
 
-    if (error) throw new BadRequestException('Erro ao gerar ICS');
+    if (error) {
+      console.error('Erro ICS:', error);
+      throw new BadRequestException('Erro ao gerar arquivo de calendário');
+    }
 
     return value as string;
   }
@@ -51,7 +52,7 @@ export class ExtrasService {
     });
 
     return events.map((event) => {
-      const message = `Lembrete: Evento PASCOM em ${event.day}/${month} às ${event.time}. Local: ${event.location}. Descrição: ${event.description}`;
+      const message = `*Lembrete PASCOM*\n\n📅 *Evento:* ${event.description}\n📍 *Local:* ${event.location}\n⏰ *Data/Hora:* ${event.day}/${month} às ${event.time}`;
       return `https://wa.me/?text=${encodeURIComponent(message)}`;
     });
   }

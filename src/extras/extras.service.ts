@@ -14,14 +14,12 @@ export class ExtrasService {
 
     if (!event) throw new BadRequestException('Evento não encontrado');
 
-    // Evitamos o "new Date(string)" que pode falhar dependendo do fuso do servidor
     const year = 2026;
     const month = parseInt(event.month, 10);
     const day = parseInt(event.day, 10);
     const [hour, minute] = event.time.split(':').map(Number);
 
     const { error, value } = ics.createEvent({
-      // O array espera: [ano, mes, dia, hora, minuto]
       start: [year, month, day, hour, minute],
       duration: { hours: 2 },
       title: `Escala PASCOM - ${event.description || 'Evento'}`,

@@ -5,7 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import * as argon2 from 'argon2';
 
-// Mock do argon2
 jest.mock('argon2');
 
 describe('AuthService', () => {

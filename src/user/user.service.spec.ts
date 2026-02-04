@@ -59,8 +59,14 @@ describe('UserService', () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
       mockPrisma.user.create.mockResolvedValue({
         id: 1,
-        ...createDto,
+        username: 'testuser',
         password: 'hashed_123456',
+        phone: '85999999999',
+        escalacao: 2,
+        situacao: 'ativo',
+        setor: 'Fotografia',
+        funcao: 'user',
+        acompanhante: 'nao',
         createdAt: new Date(),
       });
 

@@ -127,22 +127,20 @@ export class EventService {
   }
 
   async assignSlot(eventId: number, slotOrder: number, userId: number) {
-    // Busca slot + relação event
     const slot = await this.prisma.eventSlot.findFirst({
       where: { eventId, order: slotOrder },
-      include: { event: true }, // <--- adiciona isso
+      include: { event: true },
     });
     if (!slot) throw new BadRequestException('Slot não encontrado');
     if (slot.userId) throw new BadRequestException('Vaga já ocupada');
 
-    // Limite mensal
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('Usuário não encontrado');
 
     const monthlyCount = await this.prisma.eventSlot.count({
       where: {
         userId,
-        event: { month: slot.event.month }, // agora slot.event existe
+        event: { month: slot.event.month },
       },
     });
     if (monthlyCount >= (user.escalacao || 2)) {
@@ -151,7 +149,6 @@ export class EventService {
       );
     }
 
-    // Mesmo dia
     const sameDay = await this.prisma.event.findFirst({
       where: {
         month: slot.event.month,
@@ -162,7 +159,6 @@ export class EventService {
     if (sameDay)
       throw new BadRequestException('Usuário já escalado no mesmo dia');
 
-    // Função específica
     if (
       slot.function?.toLowerCase().includes('acompanhante') &&
       user.acompanhante !== 'sim'
@@ -187,7 +183,7 @@ export class EventService {
 
     const slot = await this.prisma.eventSlot.findFirst({
       where: { eventId, order: slotOrder, userId },
-      include: { event: true }, // <--- adiciona isso (se precisar de dados do event depois)
+      include: { event: true },
     });
     if (!slot) throw new BadRequestException('Slot não pertence ao usuário');
 

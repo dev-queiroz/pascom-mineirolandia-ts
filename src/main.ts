@@ -19,7 +19,6 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization, Accept',
   });
 
-  // Validação global
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -28,7 +27,6 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger personalizado
   const config = new DocumentBuilder()
     .setTitle('PASCOM API - Pastoral da Comunicação')
     .setDescription(

@@ -25,7 +25,6 @@ export class PdfService {
       bufferPages: true,
     });
 
-    // Faz o pipe diretamente para a resposta do Express
     doc.pipe(res);
 
     const primaryColor = '#1e3a8a';
@@ -33,7 +32,6 @@ export class PdfService {
     const accentColor = '#f8fafc';
     const detailColor = '#6366f1';
 
-    // --- LOGOS ---
     const logoPascom = join(
       process.cwd(),
       'src',
@@ -51,7 +49,6 @@ export class PdfService {
     if (fs.existsSync(logoParoquia))
       doc.image(logoParoquia, 495, 32, { width: 52 });
 
-    // --- CABEÇALHO ---
     doc
       .fillColor(primaryColor)
       .font('Helvetica-Bold')
@@ -80,7 +77,6 @@ export class PdfService {
       .stroke();
     doc.moveDown(3);
 
-    // --- CONTEÚDO ---
     events.forEach((event) => {
       if (doc.y > 650) doc.addPage();
       const currentY = doc.y;
@@ -135,7 +131,6 @@ export class PdfService {
       doc.moveDown(1.5);
     });
 
-    // --- RODAPÉ ---
     const range = doc.bufferedPageRange();
     for (let i = range.start; i < range.start + range.count; i++) {
       doc.switchToPage(i);

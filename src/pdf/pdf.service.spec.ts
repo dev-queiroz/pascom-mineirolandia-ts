@@ -12,7 +12,6 @@ jest.mock('fs', () => {
 
 import { PrismaService } from '../prisma/prisma.service';
 
-// Mock do PDFKit (Mantemos como você já tinha)
 jest.mock('pdfkit', () => {
   return jest.fn().mockImplementation(() => ({
     pipe: jest.fn().mockReturnThis(),
@@ -67,7 +66,6 @@ describe('PdfService', () => {
     prisma = module.get<PrismaService>(PrismaService);
   });
 
-  // Importante: Limpar os mocks após cada teste para não vazar comportamento
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -86,14 +84,13 @@ describe('PdfService', () => {
 
     (prisma.event.findMany as jest.Mock).mockResolvedValue(mockEvents);
 
-    // MUDANÇA AQUI: Usamos spyOn no fs e mockReturnValue
     const fsSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 
     await service.generateMonthlyScalePDF('05', mockResponse);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(prisma.event.findMany).toHaveBeenCalled();
-    expect(fsSpy).toHaveBeenCalled(); // Verifica se o código tentou checar os logos
+    expect(fsSpy).toHaveBeenCalled();
   });
 
   it('should handle pagination when events exist', async () => {
@@ -106,7 +103,7 @@ describe('PdfService', () => {
     });
 
     (prisma.event.findMany as jest.Mock).mockResolvedValue(mockEvents);
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true); // Mock para evitar erros de arquivo
+    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 
     await service.generateMonthlyScalePDF('05', mockResponse);
 

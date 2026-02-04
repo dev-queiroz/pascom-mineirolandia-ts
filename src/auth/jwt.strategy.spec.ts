@@ -14,7 +14,6 @@ describe('JwtStrategy', () => {
   };
 
   beforeEach(async () => {
-    // Definimos a variável de ambiente necessária para o super() da classe
     process.env.JWT_SECRET = 'test_secret';
 
     const module: TestingModule = await Test.createTestingModule({
@@ -34,7 +33,6 @@ describe('JwtStrategy', () => {
   it('should validate and return payload formatted for request if user exists', async () => {
     const payload = { sub: 1, username: 'dev-queiroz', funcao: 'admin' };
 
-    // Simulamos que o usuário foi encontrado no banco
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 1,
       username: 'dev-queiroz',
@@ -45,7 +43,7 @@ describe('JwtStrategy', () => {
     expect(result).toEqual({
       userId: 1,
       username: 'dev-queiroz',
-      funcao: 'admin', // Nota: use 'funcao' conforme seu código original
+      funcao: 'admin',
     });
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });

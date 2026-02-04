@@ -7,7 +7,7 @@ export class DashboardService {
 
   async getAdminDashboard(month?: string) {
     const currentMonth =
-      month || new Date().toISOString().slice(0, 7).slice(5, 7); // MM
+      month || new Date().toISOString().slice(0, 7).slice(5, 7);
 
     const [pendencias, escalasCount, usersCount, justificativas] =
       await Promise.all([

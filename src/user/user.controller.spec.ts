@@ -60,5 +60,25 @@ describe('UserController', () => {
     });
   });
 
-  // ... testes semelhantes para findOne, update, remove
+  describe('findOne', () => {
+    it('deve chamar service.findOne com id numérico', async () => {
+      await controller.findOne('5');
+      expect(mockUserService.findOne).toHaveBeenCalledWith(5);
+    });
+  });
+
+  describe('update', () => {
+    it('deve chamar service.update com id numérico e dto', async () => {
+      const dto = { phone: '999999999' } as any;
+      await controller.update('3', dto);
+      expect(mockUserService.update).toHaveBeenCalledWith(3, dto);
+    });
+  });
+
+  describe('remove', () => {
+    it('deve chamar service.remove com id numérico', async () => {
+      await controller.remove('7');
+      expect(mockUserService.remove).toHaveBeenCalledWith(7);
+    });
+  });
 });

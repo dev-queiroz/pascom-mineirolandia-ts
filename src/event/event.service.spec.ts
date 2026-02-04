@@ -111,7 +111,7 @@ describe('EventService', () => {
       mockPrisma.user.findUnique.mockResolvedValue({
         id: 1,
         escalacao: 5,
-        acompanhante: 'nao', // Usuário não habilitado
+        acompanhante: 'nao',
       });
       mockPrisma.eventSlot.count.mockResolvedValue(0);
       mockPrisma.event.findFirst.mockResolvedValue(null);
@@ -141,7 +141,7 @@ describe('EventService', () => {
       });
       mockPrisma.user.findUnique.mockResolvedValue({ id: 1, escalacao: 5 });
       mockPrisma.eventSlot.count.mockResolvedValue(0);
-      mockPrisma.event.findFirst.mockResolvedValue({ id: 2 }); // Evento no mesmo dia
+      mockPrisma.event.findFirst.mockResolvedValue({ id: 2 });
 
       await expect(service.assignSlot(1, 1, 1)).rejects.toThrow(
         'Usuário já escalado no mesmo dia',
@@ -182,14 +182,13 @@ describe('EventService', () => {
       mockPrisma.event.findUnique.mockResolvedValue(mockExistingEvent);
       const dto = {
         slots: [
-          { id: 10, function: 'Foto Atualizada', order: 1 }, // Update
-          { id: 0, function: 'Novo Slot', order: 2 }, // Create (id 0 ou undefined)
+          { id: 10, function: 'Foto Atualizada', order: 1 },
+          { id: 0, function: 'Novo Slot', order: 2 },
         ],
       };
 
       await service.update(eventId, dto);
 
-      // Verifica se o deleteMany foi chamado para remover slots antigos que não estão no DTO
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(prisma.event.update).toHaveBeenCalledWith(
         expect.objectContaining({

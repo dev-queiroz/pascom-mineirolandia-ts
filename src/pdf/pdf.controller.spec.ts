@@ -7,10 +7,8 @@ describe('PdfController', () => {
   let controller: PdfController;
   let service: PdfService;
 
-  // Mock do objeto Response do Express
   const mockResponse = {
     setHeader: jest.fn(),
-    // Caso seu serviço use res.send ou res.end, adicione aqui
   } as unknown as Response;
 
   beforeEach(async () => {

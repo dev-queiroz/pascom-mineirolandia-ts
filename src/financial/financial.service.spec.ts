@@ -84,7 +84,7 @@ describe('FinancialService', () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(prisma.financial.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { status: 'pendente' }, // Sem o userId
+          where: { status: 'pendente' },
         }),
       );
     });

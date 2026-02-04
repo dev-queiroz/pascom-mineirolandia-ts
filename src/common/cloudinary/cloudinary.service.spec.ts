@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CloudinaryService } from './cloudinary.service';
-import { BadRequestException } from '@nestjs/common';
 import { v2 as cloudinary } from 'cloudinary';
 
-// Mock do buffer-to-stream para não operar com streams reais
 jest.mock('buffer-to-stream', () => {
   return jest.fn().mockImplementation(() => ({
     pipe: jest.fn(),
@@ -38,21 +36,18 @@ describe('CloudinaryService', () => {
     it('should throw BadRequestException if file buffer is missing', async () => {
       const invalidFile = { ...mockFile, buffer: null } as any;
 
-      await expect(service.uploadImage(invalidFile)).rejects.toThrow(
-        Error,
-      );
+      await expect(service.uploadImage(invalidFile)).rejects.toThrow(Error);
     });
 
     it('should resolve with result on successful upload', async () => {
       const mockResponse = { secure_url: 'http://cloudinary.com/image.jpg' };
 
-      // Mock complexo do upload_stream para disparar o callback de sucesso
       jest.spyOn(cloudinary.uploader, 'upload_stream').mockImplementation(((
         options: any,
         callback: any,
       ) => {
         if (typeof options === 'function') {
-          options(null, mockResponse); // Caso o callback seja o primeiro param
+          options(null, mockResponse);
         } else if (callback) {
           callback(null, mockResponse);
         }
@@ -71,7 +66,7 @@ describe('CloudinaryService', () => {
         options: any,
         callback: any,
       ) => {
-        callback(mockError, undefined); // ERRO NO PRIMEIRO ARG
+        callback(mockError, undefined);
         return { pipe: jest.fn() };
       }) as any);
 
@@ -79,7 +74,6 @@ describe('CloudinaryService', () => {
         'Cloudinary API Error',
       );
     });
-
 
     it('should reject if result is empty and no error is provided', async () => {
       jest.spyOn(cloudinary.uploader, 'upload_stream').mockImplementation(((

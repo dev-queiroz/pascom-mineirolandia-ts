@@ -4,7 +4,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException } from '@nestjs/common';
 import * as ics from 'ics';
 
-// Mock da biblioteca ics
 jest.mock('ics', () => ({
   createEvent: jest.fn(),
 }));

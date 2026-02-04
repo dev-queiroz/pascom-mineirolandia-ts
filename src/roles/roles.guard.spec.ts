@@ -7,7 +7,6 @@ describe('RolesGuard', () => {
   let guard: RolesGuard;
   let reflector: Reflector;
 
-  // Mock do ExecutionContext
   const mockContext = {
     getHandler: jest.fn(),
     switchToHttp: jest.fn().mockReturnThis(),
@@ -36,7 +35,6 @@ describe('RolesGuard', () => {
   });
 
   it('should return true if no roles are required', () => {
-    // Simula que o Reflector não encontrou o decorator @Roles
     jest.spyOn(reflector, 'get').mockReturnValue(null);
 
     const result = guard.canActivate(mockContext);
@@ -58,7 +56,7 @@ describe('RolesGuard', () => {
 
   it('should return false if user role is not included in required roles', () => {
     const requiredRoles = ['admin'];
-    const mockUser = { funcao: 'user' }; // Role diferente
+    const mockUser = { funcao: 'user' };
 
     jest.spyOn(reflector, 'get').mockReturnValue(requiredRoles);
     jest.spyOn(mockContext.switchToHttp(), 'getRequest').mockReturnValue({

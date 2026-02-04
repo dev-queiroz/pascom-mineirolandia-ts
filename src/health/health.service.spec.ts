@@ -12,7 +12,8 @@ describe('HealthService', () => {
     service = module.get<HealthService>(HealthService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('should return status ok', () => {
+    const result = service.check();
+    expect(result).toEqual({ status: 'ok' });
   });
 });

@@ -12,6 +12,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { FinancialService } from './financial.service';
 import { CreateContributionDto } from './dto/create-contribution.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth/jwt-auth.guard';

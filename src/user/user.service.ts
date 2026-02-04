@@ -80,8 +80,4 @@ export class UserService {
   async remove(id: number) {
     return this.prisma.user.delete({ where: { id } });
   }
-
-  async findByUsername(username: string) {
-    return this.prisma.user.findUnique({ where: { username } });
-  }
 }

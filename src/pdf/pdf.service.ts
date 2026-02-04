@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import PDFDocument from 'pdfkit';
-import { existsSync } from 'fs';
+import * as fs from 'fs';
 import { PrismaService } from '../prisma/prisma.service';
 import { join } from 'path';
 import { Response } from 'express';
@@ -47,8 +47,8 @@ export class PdfService {
       'brasao-paroquia.png',
     );
 
-    if (existsSync(logoPascom)) doc.image(logoPascom, 50, 44, { width: 72 });
-    if (existsSync(logoParoquia))
+    if (fs.existsSync(logoPascom)) doc.image(logoPascom, 50, 44, { width: 72 });
+    if (fs.existsSync(logoParoquia))
       doc.image(logoParoquia, 495, 32, { width: 52 });
 
     // --- CABEÇALHO ---

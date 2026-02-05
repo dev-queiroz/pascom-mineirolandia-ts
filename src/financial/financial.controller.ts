@@ -26,6 +26,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { CreateExpenseDto } from './dto/create-expense.dto';
 
 @ApiTags('financial')
 @ApiBearerAuth('JWT')
@@ -89,5 +90,16 @@ export class FinancialController {
   @ApiOperation({ summary: 'Obter resumo financeiro (admin)' })
   getSummary(@Query('month') month?: string) {
     return this.financialService.getSummary(month);
+  }
+
+  @Post('expense')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({ summary: 'Registrar uma saída (despesa) sem comprovante' })
+  async createExpense(
+    @Body() dto: CreateExpenseDto,
+    @Req() req: Request & { user: { userId: number } },
+  ) {
+    return this.financialService.createExpense(dto, req.user.userId);
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateContributionDto } from './dto/create-contribution.dto';
 import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
+import { CreateExpenseDto } from './dto/create-expense.dto';
 
 @Injectable()
 export class FinancialService {
@@ -103,5 +104,22 @@ export class FinancialService {
       saidas,
       saldo: entradas - saidas,
     };
+  }
+
+  async createExpense(dto: CreateExpenseDto, userId: number) {
+    if (isNaN(dto.value) || dto.value <= 0) {
+      throw new BadRequestException('Valor da saída deve ser positivo');
+    }
+
+    return this.prisma.financial.create({
+      data: {
+        type: 'saida',
+        value: Number(dto.value),
+        date: new Date(dto.date),
+        note: dto.note,
+        userId,
+        status: 'confirmado',
+      },
+    });
   }
 }

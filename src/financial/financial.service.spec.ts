@@ -108,4 +108,29 @@ describe('FinancialService', () => {
       expect(result).toEqual({ entradas: 1000, saidas: 400, saldo: 600 });
     });
   });
+
+  describe('createExpense', () => {
+    it('should throw BadRequestException if expense value is negative', async () => {
+      const dto = { value: -10, date: '2026-02-05', note: 'Luz' };
+      await expect(service.createExpense(dto, 1)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should create an expense with status confirmado', async () => {
+      const dto = { value: 50, date: '2026-02-05', note: 'Água' };
+      await service.createExpense(dto, 1);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(prisma.financial.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            type: 'saida',
+            status: 'confirmado',
+            value: 50,
+          }),
+        }),
+      );
+    });
+  });
 });

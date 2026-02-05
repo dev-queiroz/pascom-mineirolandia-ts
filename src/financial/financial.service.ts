@@ -3,6 +3,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateContributionDto } from './dto/create-contribution.dto';
 import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
+import {
+  combineDateWithCurrentTime,
+  getCurrentTimeString,
+} from '../common/utils/date.utils';
 
 @Injectable()
 export class FinancialService {
@@ -30,7 +34,8 @@ export class FinancialService {
       data: {
         type: 'entrada',
         value: Number(dto.value),
-        date: new Date(dto.date),
+        date: combineDateWithCurrentTime(dto.date),
+        time: getCurrentTimeString(),
         note: dto.note,
         receipt: receiptUrl,
         userId,
@@ -115,8 +120,10 @@ export class FinancialService {
       data: {
         type: 'saida',
         value: Number(dto.value),
-        date: new Date(dto.date),
+        date: combineDateWithCurrentTime(dto.date),
+        time: getCurrentTimeString(),
         note: dto.note,
+        receipt: null,
         userId,
         status: 'confirmado',
       },

@@ -19,6 +19,11 @@ export class CreateExpenseDto {
   @IsISO8601()
   date: string;
 
+  @ApiPropertyOptional({ example: '14:30' })
+  @IsString()
+  @IsOptional()
+  time?: string;
+
   @ApiPropertyOptional({ example: 'Pagamento de energia' })
   @IsString()
   @IsOptional()

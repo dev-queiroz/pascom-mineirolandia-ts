@@ -22,7 +22,7 @@ export class CreateContributionDto {
   @ApiPropertyOptional({ example: '14:30' })
   @IsString()
   @IsOptional()
-  time?: string; // aceita HH:MM ou HH:MM:SS
+  time?: string;
 
   @ApiPropertyOptional({ example: 'Doação mensal' })
   @IsString()

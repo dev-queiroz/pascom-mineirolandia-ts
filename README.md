@@ -1,7 +1,6 @@
 # PASCOM Backend (NestJS)
 
 API completa do sistema PASCOM.
-Link do backend no Render: https://pascom-backend.onrender.com/
 
 ## Tecnologias
 - NestJS 11
